@@ -19,11 +19,9 @@ window.BitBoard = function (n) {
   this.n = n;
 };
 
-  }
-};
 
 
-window.BitBoard.prototype.convertToArray = function (shouldPrint) {
+window.BitBoard.prototype.convertToArray = function () {
   var number;
   console.log('left: ');
   for(var l = 0; l < n; l++) {
@@ -41,6 +39,15 @@ window.BitBoard.prototype.convertToArray = function (shouldPrint) {
     console.log(number & -number);
   }
 };
+
+window.printBitArray = function (bitArray, n) {
+  var number;
+  console.log('array: ');
+  for(var i = 0; i < n; i++) {
+    number = bitArray >> (n - i - 1);
+    console.log(number & -number);
+  }
+}
 
 
 
@@ -69,24 +76,26 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var conflicts = new BitBoard(n); //fixme
+  col = 0 << 1;
+  // this.left = 0 << 1;
+  // this.right = 0 << 1;
+
   var count = 0;
 
   var allOnes = (1 << n) - 1; 
-  var rookCounter = function(conf){
-    if(conf.col === allOnes){
+
+  var rookCounter = function(col){
+    if(col === allOnes){
       count++;
     } else {
+      var open = (~col) & allOnes;
+      var next;
+      while(open) {
+        next = open & -open;
 
-      var open = ~conf.coll;
-      var next = open & -open; 
+        rookCounter((col|next));
 
-      for(var col = 0; col < n; col++){
-        solution.togglePiece(level, col);
-        if(!solution.hasAnyRooksConflicts()){
-          rookCounter(level+1);  
-        } 
-        solution.togglePiece(level, col);
+        open = open & (~next);
       }
     }
   };
@@ -153,51 +162,28 @@ var boardPrinter = function(solution){
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-
-  /*
-  var solution = new Board({'n' : n}); //fixme
+  
   var count = 0;
 
-  
+  var allOnes = (1 << n) - 1; 
 
-  var queenCounter = function(level){
-    if(level === n){
-      //boardPrinter();
+  var queenCounter = function(left, col, right){
+    if(col === allOnes){
       count++;
     } else {
-      for(var col = 0; col < n; col++){
-        solution.togglePiece(level, col);
-        if(!solution.hasAnyQueensConflicts()){
-          queenCounter(level+1);  
-        } 
-        solution.togglePiece(level, col);
-      }
-    }
-  };
-*/
-  var count = 0;
-  var solution = _.range(0,n).map(function () { return 0 & 0; });
-  
-  var queenCounter = function(level){
-    if(level === n){
-      //boardPrinter();
-      count++;
-    } else {
-      var row = solution.get(level)
-      for(var col = 0; col < n; col++){
-        row = toggleIthDigit(col);
-        solution.set(level);
-        if(!solution.hasAnyQueensConflicts()){
+      var open = (~(left | col | right)) & allOnes;
+      var next;
+      while(open) {
+        next = open & -open;
 
-          queenCounter(level+1);  
-        } 
-        row = toggleIthDigit(col);
-        solution.set(level);
+        queenCounter((left|next)<<1, (col|next), (right|next)>>1);
+
+        open = open & (~next);
       }
     }
   };
 
-  queenCounter(0);
+  queenCounter(0, 0, 0);
   var solutionCount = count;
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);

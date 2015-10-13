@@ -1,6 +1,6 @@
 describe('solvers', function() {
   window.displayBoard = function() {};
-  /*
+
   describe('findNRooksSolution()', function() {
 
     it('finds a valid solution for n of 1-8', function() {
@@ -33,7 +33,7 @@ describe('solvers', function() {
 
   });
 
-  */
+  
   describe('findNQueensSolution()', function() {
 
     it('finds a valid solution for n of 0-7', function() {
@@ -70,9 +70,9 @@ describe('solvers', function() {
   describe('countNQueensSolutions()', function() {
 
     it('finds the number of valid solutions for n of 0-8', function() {
-      _.range(0, 9).map(function(n) {
+      _.range(0, 13).map(function(n) {
         var solutionCount = countNQueensSolutions(n);
-        var expectedSolutionCount = [1, 1, 0, 0, 2, 10, 4, 40, 92][n];
+        var expectedSolutionCount = [1, 1, 0, 0, 2, 10, 4, 40, 92, 352, 724, 2680, 14200][n];
 
         expect(solutionCount).to.be.equal(expectedSolutionCount);
       });
