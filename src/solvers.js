@@ -92,17 +92,39 @@ window.findNQueensSolution = function(n) {
   return solution.rows();
 };
 
-// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
-window.countNQueensSolutions = function(n) {
-  var solution = new Board({'n' : n}); //fixme
-  var count = 0;
+window.getIthDigit = function(i, solution, n){
+  var shifted = solution << (32 - (n-i)*3);
+  var reshifted = shifted >>> 29;
+  return reshifted; 
+};
 
-  var boardPrinter = function(){
+window.setQueenInRow = function(i, solution, desiredColumn, n){
+  var ith = getIthDigit(i, solution, n);
+  var preshifted = ith << (n-i-1)*3;
+  var postShifted = solution - preshifted;
+  var result = postShifted + (desiredColumn << (n-i-1)*3);
+  return result;
+};
+
+window.checkAllConflictsInRow = function(rowIndex, n, solution){
+
+};
+
+var boardPrinter = function(solution){
     for(var i = 0; i < n; i++){
       console.log(solution.get(i).toString());
     }
-    console.log("_____________")
-  };
+    console.log("_____________");
+};
+
+// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
+window.countNQueensSolutions = function(n) {
+
+  /*
+  var solution = new Board({'n' : n}); //fixme
+  var count = 0;
+
+  
 
   var queenCounter = function(level){
     if(level === n){
@@ -115,6 +137,28 @@ window.countNQueensSolutions = function(n) {
           queenCounter(level+1);  
         } 
         solution.togglePiece(level, col);
+      }
+    }
+  };
+*/
+  var count = 0;
+  var solution = _.range(0,n).map(function () { return 0 & 0; });
+  
+  var queenCounter = function(level){
+    if(level === n){
+      //boardPrinter();
+      count++;
+    } else {
+      var row = solution.get(level)
+      for(var col = 0; col < n; col++){
+        row = toggleIthDigit(col);
+        solution.set(level);
+        if(!solution.hasAnyQueensConflicts()){
+
+          queenCounter(level+1);  
+        } 
+        row = toggleIthDigit(col);
+        solution.set(level);
       }
     }
   };
