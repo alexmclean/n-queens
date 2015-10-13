@@ -12,6 +12,35 @@
 
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
+window.BitBoard = function (n) {
+  this.col = 0 << 1;
+  this.left = 0 << 1;
+  this.right = 0 << 1;
+  this.n = n;
+};
+
+  }
+};
+
+
+window.BitBoard.prototype.convertToArray = function (shouldPrint) {
+  var number;
+  console.log('left: ');
+  for(var l = 0; l < n; l++) {
+    number = this.left >> (n - l);
+    console.log(number & -number);
+  }
+  console.log('col: ');
+  for(var c = 0; c < n; c++) {
+    number = this.col >> (n - c);
+    console.log(number & -number);
+  }
+  console.log('right: ');
+  for(var r = 0; r < n; r++) {
+    number = this.right >> (n - r);
+    console.log(number & -number);
+  }
+};
 
 
 
@@ -40,13 +69,18 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solution = new Board({'n' : n}); //fixme
+  var conflicts = new BitBoard(n); //fixme
   var count = 0;
 
-  var rookCounter = function(level){
-    if(level === n){
+  var allOnes = (1 << n) - 1; 
+  var rookCounter = function(conf){
+    if(conf.col === allOnes){
       count++;
     } else {
+
+      var open = ~conf.coll;
+      var next = open & -open; 
+
       for(var col = 0; col < n; col++){
         solution.togglePiece(level, col);
         if(!solution.hasAnyRooksConflicts()){
